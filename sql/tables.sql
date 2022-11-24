@@ -25,7 +25,7 @@ create table booking(
     client_id int not null,
     treatment_id int not null,
     stylist_id int not null,
-    foreign key (client_id) references client(id) on delete cascade,
-    foreign key (treatment_id) references treatment(id) on delete cascade,
-    foreign key (stylist_id) references stylist(id) on delete cascade
+    foreign key (client_id) references client(id), 
+    foreign key (treatment_id) references treatment(id), 
+    foreign key (stylist_id) references stylist(id) 
 )

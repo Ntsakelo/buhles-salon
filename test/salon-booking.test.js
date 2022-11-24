@@ -21,78 +21,253 @@ describe("The Booking Salon", function () {
     await db.none(`delete from booking`);
   });
 
-  //   it("should be able to list treatments", async function () {
-  //     const treatments = await booking.findAllTreatments();
-  //     assert.equal("", treatments);
-  //   });
-
-  it("should be able to find a stylist", async function () {
-    const stylist = await booking.findStylist("0671231342");
-    assert.deepEqual(
-      {
-        id: 2,
-        first_name: "Buhle",
-        last_name: "Zulu",
-        phone_number: "0671231342",
-        commission_percentage: "0.15",
-      },
-      stylist
-    );
+  it("should be able to list treatments", async function () {
+    try {
+      const treatments = await booking.findAllTreatments();
+      assert.equal(4, treatments.length);
+    } catch (err) {
+      console.log(err);
+    }
   });
 
-  //   it("should be able to allow a client to make a booking", async function () {
-  //     const client = await booking.findClient("***");
+  it("should be able to find a stylist", async function () {
+    try {
+      const stylist = await booking.findStylist("0671231342");
+      assert.equal("Buhle", stylist.first_name);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+  it("should be able to find a client", async function () {
+    try {
+      const client = await booking.findClient("0726541234");
+      assert.deepEqual("Thanyani", client.first_name);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+  it("should be able to find a treatment", async function () {
+    try {
+      const treatment = await booking.findTreatment("P01");
+      assert.equal("Pedicure", treatment.type);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+  it("should be able to allow a client to make a booking", async function () {
+    try {
+      const client = await booking.findClient("0820701111");
+      const treatment = await booking.findTreatment("M03");
+      const stylist = await booking.findStylist("0817878111");
+      await booking.makeBooking(
+        client.id,
+        treatment.id,
+        stylist.id,
+        "2022-11-24",
+        "14:00"
+      );
 
-  //     const booking = await booking.makeBooking(
-  //       treatmentId,
-  //       client.id,
-  //       date,
-  //       time
-  //     );
+      const bookings = await booking.findClientBookings(client.id);
+      assert.deepEqual(
+        [
+          {
+            booking_date: "24/11/2022",
+            booking_time: "14:00:00",
+            client_id: client.id,
+            treatment_id: treatment.id,
+            stylist_id: stylist.id,
+          },
+        ],
+        bookings
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  });
 
-  //     const bookings = await booking.findClientBookings(client.id);
-  //     assert.equal([], bookings);
-  //   });
+  it("should be able to get client booking(s)", async function () {
+    const client1 = await booking.findClient("0792516711");
+    const client2 = await booking.findClient("0691905454");
+    const client3 = await booking.findClient("0820701111");
 
-  //   it("should be able to get client booking(s)", async function () {
-  //     const client1 = await booking.findClient("***");
-  //     const client2 = await booking.findClient("***");
+    const treatment1 = await booking.findTreatment("B04");
+    const treatment2 = await booking.findTreatment("M03");
 
-  //     const treatment1 = await booking.findTreatment("***");
-  //     const treatment2 = await booking.findTreatment("***");
+    const stylist = await booking.findStylist("0720701211");
+    const stylist2 = await booking.findStylist("0817878111");
+    const stylist3 = await booking.findStylist("0671231342");
 
-  //     await booking.booking(treatment1.id, client1.id, date, time);
-  //     await booking.booking(treatment2.id, client1.id, date, time);
-  //     await booking.booking(treatment1.id, client2.id, date, time);
+    await booking.makeBooking(
+      client1.id,
+      treatment1.id,
+      stylist.id,
+      "2022-11-24",
+      "14:00"
+    );
+    await booking.makeBooking(
+      client1.id,
+      treatment1.id,
+      stylist2.id,
+      "2022-11-24",
+      "14:00"
+    );
+    await booking.makeBooking(
+      client1.id,
+      treatment1.id,
+      stylist3.id,
+      "2022-11-24",
+      "14:00"
+    );
 
-  //     const bookings = await booking.findAllBookings(client);
+    const bookings = await booking.findAllBookings("2022-11-24");
 
-  //     assert.equal([], clientBooking);
-  //   });
+    assert.equal(2, bookings.length);
+  });
+  it("should be able to get stylists that ever gave the treatment", async function () {
+    try {
+      const client = await booking.findClient("0691905454");
 
-  //   it("should be able to get bookings for a date", async function () {
-  //     const client1 = await booking.findClient("***");
-  //     const client2 = await booking.findClient("***");
+      const treatment = await booking.findTreatment("B04");
 
-  //     const treatment1 = await booking.findTreatment("***");
-  //     const treatment2 = await booking.findTreatment("***");
+      const stylist = await booking.findStylist("0791110911");
+      const stylist2 = await booking.findStylist("0817878111");
 
-  //     await booking.booking(treatment1.id, client1.id, date, time);
-  //     await booking.booking(treatment2.id, client1.id, date, time);
-  //     await booking.booking(treatment3.id, client2.id, date, time);
+      await booking.makeBooking(
+        client.id,
+        treatment.id,
+        stylist.id,
+        "2022-11-24",
+        "14:00"
+      );
+      await booking.makeBooking(
+        client.id,
+        treatment.id,
+        stylist2.id,
+        "2022-11-25",
+        "16:00"
+      );
 
-  //     const bookings = await booking.findAllBookings({ date, time });
+      const treatmentStylist = await booking.findStylistsForTreatment(
+        treatment.id
+      );
 
-  //     assert.equal([], bookings);
-  //   });
+      assert.deepEqual(
+        [{ first_name: "Lefa" }, { first_name: "Nthabi" }],
+        treatmentStylist
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  });
+  it("should be able to get bookings for a date", async function () {
+    const client1 = await booking.findClient("0710991234");
+    const client2 = await booking.findClient("0817876432");
+    const client3 = await booking.findClient("0820701111");
 
-  //   it("should be able to find the total income for a day", function () {
-  //     assert.equal(1, 2);
-  //   });
+    const treatment1 = await booking.findTreatment("P01");
+    const treatment2 = await booking.findTreatment("B04");
 
-  //   it("should be able to find the most valuable client", function () {
-  //     assert.equal(1, 2);
-  //   });
+    const stylist = await booking.findStylist("0817878111");
+    const stylist2 = await booking.findStylist("0791110911");
+
+    await booking.makeBooking(
+      client1.id,
+      treatment1.id,
+      stylist.id,
+      "2022-11-24",
+      "16:00"
+    );
+    await booking.makeBooking(
+      client1.id,
+      treatment1.id,
+      stylist.id,
+      "2022-11-24",
+      "16:00"
+    );
+    await booking.makeBooking(
+      client3.id,
+      treatment2.id,
+      stylist2.id,
+      "2022-11-25",
+      "16:00"
+    );
+    let data = { time: "16:00", date: "2022-11-25" };
+    const bookings = await booking.findBookings(data);
+
+    assert.equal(1, bookings.length);
+  });
+
+  it("should be able to find the total income for a day", async function () {
+    try {
+      const client1 = await booking.findClient("0710991234");
+      const client2 = await booking.findClient("0820701111");
+
+      const treatment1 = await booking.findTreatment("P01");
+      const treatment2 = await booking.findTreatment("B04");
+
+      const stylist = await booking.findStylist("0817878111");
+      const stylist2 = await booking.findStylist("0791110911");
+
+      await booking.makeBooking(
+        client1.id,
+        treatment1.id,
+        stylist.id,
+        "2022-11-25",
+        "16:00"
+      );
+      await booking.makeBooking(
+        client2.id,
+        treatment2.id,
+        stylist2.id,
+        "2022-11-25",
+        "16:00"
+      );
+      const amount = await booking.totalIncomeForDay("2022-11-25");
+
+      assert.equal(415, amount.sum);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  it("should be able to find the most valuable client", async function () {
+    try {
+      const client1 = await booking.findClient("0710991234");
+      const client2 = await booking.findClient("0820701111");
+
+      const treatment1 = await booking.findTreatment("P01");
+      const treatment2 = await booking.findTreatment("B04");
+
+      const stylist = await booking.findStylist("0817878111");
+      const stylist2 = await booking.findStylist("0791110911");
+
+      await booking.makeBooking(
+        client1.id,
+        treatment1.id,
+        stylist.id,
+        "2022-11-25",
+        "16:00"
+      );
+      await booking.makeBooking(
+        client2.id,
+        treatment2.id,
+        stylist2.id,
+        "2022-11-25",
+        "16:00"
+      );
+      await booking.makeBooking(
+        client2.id,
+        treatment1.id,
+        stylist2.id,
+        "2022-11-27",
+        "16:00"
+      );
+      const bestClient = await booking.mostValuableClient();
+      assert.equal("Dzunisani", bestClient.first_name);
+    } catch (err) {
+      console.log(err);
+    }
+  });
   //   it("should be able to find the total commission for a given stylist", function () {
   //     assert.equal(1, 2);
   //   });
