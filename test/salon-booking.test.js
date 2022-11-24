@@ -86,42 +86,46 @@ describe("The Booking Salon", function () {
   });
 
   it("should be able to get client booking(s)", async function () {
-    const client1 = await booking.findClient("0792516711");
-    const client2 = await booking.findClient("0691905454");
-    const client3 = await booking.findClient("0820701111");
+    try {
+      const client1 = await booking.findClient("0792516711");
+      const client2 = await booking.findClient("0691905454");
+      const client3 = await booking.findClient("0820701111");
 
-    const treatment1 = await booking.findTreatment("B04");
-    const treatment2 = await booking.findTreatment("M03");
+      const treatment1 = await booking.findTreatment("B04");
+      const treatment2 = await booking.findTreatment("M03");
 
-    const stylist = await booking.findStylist("0720701211");
-    const stylist2 = await booking.findStylist("0817878111");
-    const stylist3 = await booking.findStylist("0671231342");
+      const stylist = await booking.findStylist("0720701211");
+      const stylist2 = await booking.findStylist("0817878111");
+      const stylist3 = await booking.findStylist("0671231342");
 
-    await booking.makeBooking(
-      client1.id,
-      treatment1.id,
-      stylist.id,
-      "2022-11-24",
-      "14:00"
-    );
-    await booking.makeBooking(
-      client1.id,
-      treatment1.id,
-      stylist2.id,
-      "2022-11-24",
-      "14:00"
-    );
-    await booking.makeBooking(
-      client1.id,
-      treatment1.id,
-      stylist3.id,
-      "2022-11-24",
-      "14:00"
-    );
+      await booking.makeBooking(
+        client1.id,
+        treatment1.id,
+        stylist.id,
+        "2022-11-24",
+        "14:00"
+      );
+      await booking.makeBooking(
+        client1.id,
+        treatment1.id,
+        stylist2.id,
+        "2022-11-24",
+        "14:00"
+      );
+      await booking.makeBooking(
+        client1.id,
+        treatment1.id,
+        stylist3.id,
+        "2022-11-24",
+        "14:00"
+      );
 
-    const bookings = await booking.findAllBookings("2022-11-24");
+      const bookings = await booking.findAllBookings("2022-11-24");
 
-    assert.equal(2, bookings.length);
+      assert.equal(2, bookings.length);
+    } catch (err) {
+      console.log(err);
+    }
   });
   it("should be able to get stylists that ever gave the treatment", async function () {
     try {
@@ -160,41 +164,45 @@ describe("The Booking Salon", function () {
     }
   });
   it("should be able to get bookings for a date", async function () {
-    const client1 = await booking.findClient("0710991234");
-    const client2 = await booking.findClient("0817876432");
-    const client3 = await booking.findClient("0820701111");
+    try {
+      const client1 = await booking.findClient("0710991234");
+      const client2 = await booking.findClient("0817876432");
+      const client3 = await booking.findClient("0820701111");
 
-    const treatment1 = await booking.findTreatment("P01");
-    const treatment2 = await booking.findTreatment("B04");
+      const treatment1 = await booking.findTreatment("P01");
+      const treatment2 = await booking.findTreatment("B04");
 
-    const stylist = await booking.findStylist("0817878111");
-    const stylist2 = await booking.findStylist("0791110911");
+      const stylist = await booking.findStylist("0817878111");
+      const stylist2 = await booking.findStylist("0791110911");
 
-    await booking.makeBooking(
-      client1.id,
-      treatment1.id,
-      stylist.id,
-      "2022-11-24",
-      "16:00"
-    );
-    await booking.makeBooking(
-      client1.id,
-      treatment1.id,
-      stylist.id,
-      "2022-11-24",
-      "16:00"
-    );
-    await booking.makeBooking(
-      client3.id,
-      treatment2.id,
-      stylist2.id,
-      "2022-11-25",
-      "16:00"
-    );
-    let data = { time: "16:00", date: "2022-11-25" };
-    const bookings = await booking.findBookings(data);
+      await booking.makeBooking(
+        client1.id,
+        treatment1.id,
+        stylist.id,
+        "2022-11-24",
+        "16:00"
+      );
+      await booking.makeBooking(
+        client1.id,
+        treatment1.id,
+        stylist.id,
+        "2022-11-24",
+        "16:00"
+      );
+      await booking.makeBooking(
+        client3.id,
+        treatment2.id,
+        stylist2.id,
+        "2022-11-25",
+        "16:00"
+      );
+      let data = { time: "16:00", date: "2022-11-25" };
+      const bookings = await booking.findBookings(data);
 
-    assert.equal(1, bookings.length);
+      assert.equal(1, bookings.length);
+    } catch (err) {
+      console.log(err);
+    }
   });
 
   it("should be able to find the total income for a day", async function () {
