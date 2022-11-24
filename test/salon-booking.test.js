@@ -17,9 +17,9 @@ const db = pgp(config);
 let booking = SalonBooking(db);
 
 describe("The Booking Salon", function () {
-  beforeEach(async function () {
-    await db.none(`delete from booking`);
-  });
+  //   beforeEach(async function () {
+  //     await db.none(`delete from booking`);
+  //   });
 
   it("should be able to list treatments", async function () {
     try {
