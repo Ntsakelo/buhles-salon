@@ -83,7 +83,6 @@ describe("The Booking Salon", function () {
         ],
         bookings
       );
-      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -280,9 +279,40 @@ describe("The Booking Salon", function () {
       console.log(err);
     }
   });
-  //   it("should be able to find the total commission for a given stylist", function () {
-  //     assert.equal(1, 2);
-  //   });
+  it("should be able to find the total commission for a given stylist", async function () {
+    try {
+      const client1 = await booking.findClient("0710991234");
+      const client2 = await booking.findClient("0820701111");
+
+      const treatment1 = await booking.findTreatment("P01");
+      const treatment2 = await booking.findTreatment("B04");
+
+      const stylist = await booking.findStylist("0817878111");
+      const stylist2 = await booking.findStylist("0791110911");
+
+      await booking.makeBooking(
+        client1.id,
+        treatment1.id,
+        stylist2.id,
+        "2022-11-25",
+        "11:00"
+      );
+      await booking.makeBooking(
+        client2.id,
+        treatment2.id,
+        stylist2.id,
+        "2022-11-25",
+        "16:00"
+      );
+      const commission = await booking.totalCommission(
+        "2022-11-25",
+        stylist2.id
+      );
+      assert.equal(45.65, commission);
+    } catch (err) {
+      console.log(err);
+    }
+  });
 
   after(function () {
     db.$pool.end();

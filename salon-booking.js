@@ -170,9 +170,17 @@ export default function salonBooking(db) {
       console.log(err);
     }
   }
-  async function deleteFromBookings() {
+  async function totalCommission(date, stylistId) {
     try {
-      await db.none("delete from booking");
+      let result = await db.manyOrNone(
+        "select * from booking join stylist on booking.stylist_id = stylist.id join treatment on booking.treatment_id = treatment.id where booking_date = $1 and stylist_id = $2",
+        [date, stylistId]
+      );
+      let commission = 0;
+      result.forEach((item) => {
+        commission += Number(item.commission_percentage) * item.price;
+      });
+      return commission;
     } catch (err) {
       console.log(err);
     }
@@ -189,6 +197,6 @@ export default function salonBooking(db) {
     findBookings,
     totalIncomeForDay,
     mostValuableClient,
-    deleteFromBookings,
+    totalCommission,
   };
 }
