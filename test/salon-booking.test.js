@@ -16,19 +16,12 @@ const db = pgp(config);
 
 let booking = SalonBooking(db);
 
-describe("The Booking Salon", async function () {
-  try {
-    beforeEach(async function () {
-      await db.none(`delete from booking`);
-    });
-  } catch (err) {
-    console.log(err);
-  }
-
+describe("The Booking Salon", function () {
   it("should be able to list treatments", async function () {
     try {
       const treatments = await booking.findAllTreatments();
       assert.equal(4, treatments.length);
+      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -38,6 +31,7 @@ describe("The Booking Salon", async function () {
     try {
       const stylist = await booking.findStylist("0671231342");
       assert.equal("Buhle", stylist.first_name);
+      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -46,6 +40,7 @@ describe("The Booking Salon", async function () {
     try {
       const client = await booking.findClient("0726541234");
       assert.deepEqual("Thanyani", client.first_name);
+      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -54,6 +49,7 @@ describe("The Booking Salon", async function () {
     try {
       const treatment = await booking.findTreatment("P01");
       assert.equal("Pedicure", treatment.type);
+      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -84,6 +80,7 @@ describe("The Booking Salon", async function () {
         ],
         bookings
       );
+      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -127,6 +124,7 @@ describe("The Booking Salon", async function () {
       const bookings = await booking.findAllBookings("2022-11-24");
 
       assert.equal(2, bookings.length);
+      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -163,6 +161,7 @@ describe("The Booking Salon", async function () {
         [{ first_name: "Lefa" }, { first_name: "Nthabi" }],
         treatmentStylist
       );
+      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -204,6 +203,7 @@ describe("The Booking Salon", async function () {
       const bookings = await booking.findBookings(data);
 
       assert.equal(1, bookings.length);
+      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -237,6 +237,7 @@ describe("The Booking Salon", async function () {
       const amount = await booking.totalIncomeForDay("2022-11-25");
 
       assert.equal(415, amount.sum);
+      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -276,6 +277,7 @@ describe("The Booking Salon", async function () {
       );
       const bestClient = await booking.mostValuableClient();
       assert.equal("Dzunisani", bestClient.first_name);
+      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }

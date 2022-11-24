@@ -170,7 +170,13 @@ export default function salonBooking(db) {
       console.log(err);
     }
   }
-
+  async function deleteFromBookings() {
+    try {
+      await db.none("delete from booking");
+    } catch (err) {
+      console.log(err);
+    }
+  }
   return {
     findStylist,
     findClient,
@@ -183,5 +189,6 @@ export default function salonBooking(db) {
     findBookings,
     totalIncomeForDay,
     mostValuableClient,
+    deleteFromBookings,
   };
 }
