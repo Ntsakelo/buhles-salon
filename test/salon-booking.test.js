@@ -5,7 +5,7 @@ import pgPromise from "pg-promise";
 // TODO configure this to work.
 const DATABASE_URL =
   process.env.DATABASE_URL ||
-  "postgresql://coder:pg123@localhost:5432/buhles_salon";
+  "postgresql://coder:pg123@localhost:5432/buhle_salon_tests";
 
 const config = {
   connectionString: DATABASE_URL,
@@ -17,11 +17,17 @@ const db = pgp(config);
 let booking = SalonBooking(db);
 
 describe("The Booking Salon", function () {
+  try {
+    this.beforeEach(async function () {
+      await db.none("delete from booking");
+    });
+  } catch (err) {
+    console.log(err);
+  }
   it("should be able to list treatments", async function () {
     try {
       const treatments = await booking.findAllTreatments();
       assert.equal(4, treatments.length);
-      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -31,7 +37,6 @@ describe("The Booking Salon", function () {
     try {
       const stylist = await booking.findStylist("0671231342");
       assert.equal("Buhle", stylist.first_name);
-      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -40,7 +45,6 @@ describe("The Booking Salon", function () {
     try {
       const client = await booking.findClient("0726541234");
       assert.deepEqual("Thanyani", client.first_name);
-      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -49,7 +53,6 @@ describe("The Booking Salon", function () {
     try {
       const treatment = await booking.findTreatment("P01");
       assert.equal("Pedicure", treatment.type);
-      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -124,7 +127,6 @@ describe("The Booking Salon", function () {
       const bookings = await booking.findAllBookings("2022-11-24");
 
       assert.equal(2, bookings.length);
-      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -161,7 +163,6 @@ describe("The Booking Salon", function () {
         [{ first_name: "Lefa" }, { first_name: "Nthabi" }],
         treatmentStylist
       );
-      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -203,7 +204,6 @@ describe("The Booking Salon", function () {
       const bookings = await booking.findBookings(data);
 
       assert.equal(1, bookings.length);
-      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -237,7 +237,6 @@ describe("The Booking Salon", function () {
       const amount = await booking.totalIncomeForDay("2022-11-25");
 
       assert.equal(415, amount.sum);
-      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }
@@ -277,7 +276,6 @@ describe("The Booking Salon", function () {
       );
       const bestClient = await booking.mostValuableClient();
       assert.equal("Dzunisani", bestClient.first_name);
-      await booking.deleteFromBookings();
     } catch (err) {
       console.log(err);
     }

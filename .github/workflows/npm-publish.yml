@@ -23,7 +23,7 @@ jobs:
         env:
           POSTGRES_USER: coder
           POSTGRES_PASSWORD: pg123
-          POSTGRES_DB: buhles_salon
+          POSTGRES_DB: buhle_salon_tests
         ports:
           - 5432:5432
         # Set health checks to wait until postgres has started
@@ -37,8 +37,8 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: create postgresql tables
-        run: PGPASSWORD=pg123 psql -h localhost -U coder -d buhles_salon -a -f ./tables.sql
+        run: PGPASSWORD=pg123 psql -h localhost -U coder -d buhle_salon_tests -a -f ./tables.sql
       - name: run tests with postgresql
         run: npm test
         env:
-          DATABASE_URL: postgresql://coder:pg123@localhost:5432/buhles_salon
+          DATABASE_URL: postgresql://coder:pg123@localhost:5432/buhle_salon_tests

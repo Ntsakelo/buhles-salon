@@ -1,3 +1,9 @@
+create table client(
+    id serial primary key not null,
+    first_name text not null,
+    last_name text not null,
+    phone_number text not null
+);
 create table treatment(
     id serial primary key not null,
     type text not null,
@@ -21,7 +27,7 @@ create table booking(
     foreign key (client_id) references client(id), 
     foreign key (treatment_id) references treatment(id), 
     foreign key (stylist_id) references stylist(id) 
-)
+);
 
 insert into client(first_name,last_name,phone_number) values('Tintswalo','Ngobeni','0792516711');
 insert into client(first_name,last_name,phone_number) values('Thanyani','Mudau','0726541234');
