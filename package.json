@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/codex-academy/bulhes-salon#readme",
   "dependencies": {
+    "express": "^4.18.2",
     "mocha": "^10.1.0",
     "pg-promise": "^10.15.0"
   }
